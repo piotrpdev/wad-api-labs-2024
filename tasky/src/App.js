@@ -1,30 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import './App.css';
+import React, { useState, useEffect } from 'react';
+import {getTasks, addTask, deleteTask, updateTask} from "./api/tasky-api";
 import Task from './components/Task';
 import AddTaskForm from './components/Form';
-import {getTasks, addTask, deleteTask, updateTask} from "./api/tasky-api";
 
 function App() {
-  const [ taskState, setTaskState ] = useState({tasks: []});
+  
+
+const [ taskState, setTaskState ] = useState({tasks: []});
 
 useEffect(() => {
     getTasks().then(tasks => {
       setTaskState({tasks: tasks});
     });
   }, []);	
+  
 
-  const [ formState, setFormState ] = useState({
-    title: "",
-    description: "",
-    deadline: "",
-    priority: "Low"
-  });
-
+const [ formState, setFormState ] = useState({
+  title: "",
+  description: "",
+  deadline: "",
+  priority: "Low"
+});
+  
   const formChangeHandler = (event) => {
     let form = {...formState};
-
-    console.log(event)
 
     switch(event.target.name) {
       case "title":
@@ -43,9 +43,8 @@ useEffect(() => {
           form = formState;
     }
     setFormState(form);
-    console.log(formState);
   }
-
+  
   const formSubmitHandler = async (event) => {
     event.preventDefault();
     const tasks = taskState.tasks?[...taskState.tasks]:[];
@@ -54,22 +53,21 @@ useEffect(() => {
     tasks.push(newTask);
     setTaskState({tasks});
   }
-
-
+  
   const doneHandler = (taskIndex) => {
     const tasks = [...taskState.tasks];
     tasks[taskIndex].done = !tasks[taskIndex].done;
-    updateTask(tasks[taskIndex]);
-    setTaskState({tasks});
+  updateTask(tasks[taskIndex]);
+  setTaskState({tasks});
   }
-
+  
   const deleteHandler = (taskIndex) => {
     const tasks = [...taskState.tasks];
     const id=tasks[taskIndex]._id;
     tasks.splice(taskIndex, 1);
     deleteTask(id);
     setTaskState({tasks});
-  }
+    }
   
   return (
     <div className="container">
@@ -80,7 +78,7 @@ useEffect(() => {
           description={task.description}
           deadline={task.deadline}
           priority={task.priority}
-          key={task._id}
+          key={task.id}
           done={task.done}
           markDone={() => doneHandler(index)}
           deleteTask = {() => deleteHandler(index)}
